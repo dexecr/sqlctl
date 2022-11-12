@@ -1,30 +1,30 @@
 package com.dexecr.cmd;
 
-import com.dexecr.driver.Vendor;
-import picocli.CommandLine;
+import com.dexecr.sql.DatabaseInfo;
+import lombok.Getter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(subcommands = ExecuteQueryCommand.class)
-public class SqlctlCommand {
-    @Option(names = {"-u", "--username"}, scope = CommandLine.ScopeType.INHERIT)
-    String username;
+@Command(subcommands = {
+        ExecuteQueryCommand.class,
+        ConnectCommand.class
+})
+public class SqlctlCommand implements Runnable, DatabaseInfo {
 
-    @Option(names = {"-p", "--password"}, interactive = true, scope = CommandLine.ScopeType.INHERIT)
-    char[] password;
+    @Getter
+    @Option(names = {"-u", "--username"})
+    private String username;
 
-    @Option(names = {"-h", "--host"}, defaultValue = "localhost", scope = CommandLine.ScopeType.INHERIT)
-    String host;
+    @Getter
+    @Option(names = {"-p", "--password"}, interactive = true)
+    private char[] password;
 
-    @Option(names = {"--port"}, scope = CommandLine.ScopeType.INHERIT)
-    String port;
+    @Getter
+    @Option(names = {"--url"})
+    private String url;
 
-    @Option(names = {"-d", "--database"}, scope = CommandLine.ScopeType.INHERIT)
-    String database;
-
-    @Option(names = {"--url"}, scope = CommandLine.ScopeType.INHERIT)
-    String url;
-
-    @Option(names = {"--vendor"}, scope = CommandLine.ScopeType.INHERIT)
-    Vendor vendor;
+    @Override
+    public void run() {
+        new ConnectCommand(this).run();
+    }
 }
