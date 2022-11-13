@@ -64,6 +64,10 @@ public enum DriverType {
     }
 
 
+    public String buildUrl(String host, int port, String database) {
+        return "jdbc:" + name() + "://" + host + ":" + port + "/" + database;
+    }
+
     public Properties credentialsInfo(Properties properties, CredentialsInfo credentials) {
         properties.put(propertyDescriptor.username, credentials.getUsername());
         properties.put(propertyDescriptor.password, new String(credentials.getPassword()));

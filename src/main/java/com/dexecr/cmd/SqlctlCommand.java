@@ -2,6 +2,8 @@ package com.dexecr.cmd;
 
 import com.dexecr.sql.DatabaseInfo;
 import lombok.Getter;
+import lombok.experimental.Delegate;
+import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -11,20 +13,25 @@ import picocli.CommandLine.Option;
 })
 public class SqlctlCommand implements Runnable, DatabaseInfo {
 
-    @Getter
-    @Option(names = {"-u", "--username"})
-    private String username;
-
-    @Getter
-    @Option(names = {"-p", "--password"}, interactive = true)
-    private char[] password;
-
-    @Getter
-    @Option(names = {"--url"})
-    private String url;
+    @ArgGroup(exclusive = false)
+    @Delegate
+    private DatabaseInfoGroup databaseInfoGroup;
 
     @Override
     public void run() {
         new ConnectCommand(this).run();
+    }
+
+    @Getter
+    static class DatabaseInfoGroup {
+
+        @Option(names = {"-u", "--username"})
+        private String username;
+
+        @Option(names = {"-p", "--password"}, interactive = true)
+        private char[] password;
+
+        @Option(names = "--url")
+        private String url;
     }
 }

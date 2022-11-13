@@ -36,10 +36,10 @@ public class QueryExecutor implements AutoCloseable {
 
                         @Override
                         @SneakyThrows
-                        public List<String> next() {
-                            List<String> result = new ArrayList<>();
+                        public String[] next() {
+                            String[] result = new String[headers.size()];
                             for (int i = 1; i <= headers.size(); i++) {
-                                result.add(rs.getString(i));
+                                result[i - 1] = rs.getString(i);
                             }
                             return result;
                         }
