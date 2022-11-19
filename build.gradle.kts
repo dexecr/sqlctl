@@ -10,7 +10,7 @@ repositories {
 
 plugins {
     id("java-library")
-    id("org.graalvm.buildtools.native") version "0.9.14"
+//    id("org.graalvm.buildtools.native") version "0.9.17"
 }
 
 dependencies {
@@ -21,10 +21,25 @@ dependencies {
     implementation("com.h2database:h2:2.1.214")
     implementation("mysql:mysql-connector-java:8.0.31")
 
+    compileOnly("org.graalvm.nativeimage:svm:22.2.0")
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
 
 }
+
+//graalvmNative {
+//    agent {
+//        defaultMode.set("standard")
+//    }
+//    binaries {
+//        named("main") {
+//            imageName.set("sqlctl")
+//        }
+//    }
+//    metadataRepository {
+//        enabled.set(true)
+//    }
+//}
 
 tasks.jar {
     archiveFileName.set("${project.name}.jar")
@@ -32,16 +47,16 @@ tasks.jar {
     manifest.attributes["Class-Path"] = configurations
         .runtimeClasspath
         .get()
-        .joinToString(separator = " ") { file ->
-            "libs/${file.name}"
-        }
-    val dependencies = configurations
-        .runtimeClasspath
-        .get()
-        .map(::zipTree)
-    from(dependencies)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        .joinToString(separator = " ") { it.name }
 }
+
+task("copyDependencies", Copy::class) {
+    configurations.compileClasspath.get()
+        .filter { it.extension == "jar" }
+        .forEach { from(it.absolutePath).into("$buildDir/libs") }
+}
+
+tasks["build"].dependsOn("copyDependencies")
 
 
 group = "com.dexecr"

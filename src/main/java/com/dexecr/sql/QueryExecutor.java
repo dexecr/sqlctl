@@ -15,8 +15,9 @@ public class QueryExecutor implements AutoCloseable {
 
     @SneakyThrows
     public QueryExecutor(DatabaseInfo databaseInfo) {
-        var driver = DriverType.fromUrl(databaseInfo.getUrl());
-        connection = driver.getDriverInstance().connect(databaseInfo.getUrl(), driver.credentialsInfo(databaseInfo));
+        var driver = databaseInfo.getDriver();
+        var url = driver.buildUrl(databaseInfo.getHost(), databaseInfo.getPort(), databaseInfo.getDatabase());
+        connection = driver.getDriverInstance().connect(url, driver.info.build(databaseInfo));
     }
 
     @SneakyThrows
@@ -36,10 +37,10 @@ public class QueryExecutor implements AutoCloseable {
 
                         @Override
                         @SneakyThrows
-                        public List<String> next() {
-                            List<String> result = new ArrayList<>();
+                        public String[] next() {
+                            String[] result = new String[headers.size()];
                             for (int i = 1; i <= headers.size(); i++) {
-                                result.add(rs.getString(i));
+                                result[i - 1] = rs.getString(i);
                             }
                             return result;
                         }

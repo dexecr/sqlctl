@@ -7,7 +7,7 @@ import java.util.List;
 
 public class TableUtil {
 
-    public static void printTable(List<String> headers, Iterator<List<String>> rows) {
+    public static void printTable(List<String> headers, Iterator<String[]> rows) {
         if (headers == null || rows == null) {
             return;
         }
@@ -15,10 +15,10 @@ public class TableUtil {
         for (int i = 0; i < headers.size(); i++) {
             maxColumnsLength[i] = Math.max(maxColumnsLength[i], headers.get(i).length());
         }
-        List<List<String>> cachedRows = new ArrayList<>();
+        List<String[]> cachedRows = new ArrayList<>();
         rows.forEachRemaining(row -> {
-            for (int i = 0; i < row.size(); i++) {
-                maxColumnsLength[i] = Math.max(maxColumnsLength[i], row.get(i) == null ? 0 : row.get(i).length());
+            for (int i = 0; i < row.length; i++) {
+                maxColumnsLength[i] = Math.max(maxColumnsLength[i], row[i] == null ? 0 : row[i].length());
             }
             cachedRows.add(row);
         });
@@ -39,6 +39,6 @@ public class TableUtil {
         String rowDelimiter = sbDelimiter.toString();
         System.out.printf(rowFormat, headers.toArray());
         System.out.println(rowDelimiter);
-        cachedRows.forEach(row -> System.out.printf(rowFormat, row.toArray()));
+        cachedRows.forEach(row -> System.out.printf(rowFormat, (Object[]) row));
     }
 }
