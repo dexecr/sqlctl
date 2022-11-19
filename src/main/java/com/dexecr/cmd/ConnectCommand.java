@@ -19,7 +19,7 @@ class ConnectCommand implements Runnable {
 
     @Override
     public void run() {
-        try(var executor = new QueryExecutor(base)) {
+        try(var executor = new QueryExecutor(base.databaseInfoGroup)) {
 
         } catch (Exception e) {
             e.printStackTrace();

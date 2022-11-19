@@ -15,8 +15,9 @@ public class QueryExecutor implements AutoCloseable {
 
     @SneakyThrows
     public QueryExecutor(DatabaseInfo databaseInfo) {
-        var driver = DriverType.fromUrl(databaseInfo.getUrl());
-        connection = driver.getDriverInstance().connect(databaseInfo.getUrl(), driver.credentialsInfo(databaseInfo));
+        var driver = databaseInfo.getDriver();
+        var url = driver.buildUrl(databaseInfo.getHost(), databaseInfo.getPort(), databaseInfo.getDatabase());
+        connection = driver.getDriverInstance().connect(url, driver.info.build(databaseInfo));
     }
 
     @SneakyThrows

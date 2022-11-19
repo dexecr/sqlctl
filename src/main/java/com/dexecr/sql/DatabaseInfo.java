@@ -1,5 +1,11 @@
 package com.dexecr.sql;
 
 public interface DatabaseInfo extends CredentialsInfo {
-    String getUrl();
+    String getHost();
+
+    int getPort();
+
+    String getDatabase();
+
+    DriverType getDriver();
 }
